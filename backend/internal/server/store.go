@@ -3319,21 +3319,7 @@ func (s *GormStore) RecordRouteAttempts(requestID string, attempts []RouteAttemp
 	now := time.Now().UTC()
 	items := make([]RouteAttemptLog, 0, len(attempts))
 	for index, attempt := range attempts {
-		items = append(items, RouteAttemptLog{
-			ID:                 NewID("rat"),
-			RequestID:          requestID,
-			AttemptIndex:       index + 1,
-			RouteID:            attempt.Selection.Route.ID,
-			ProviderID:         attempt.Selection.Provider.ID,
-			ProviderResourceID: routeResourceID(attempt.Selection),
-			ProviderModel:      attempt.Selection.ProviderModel,
-			StatusCode:         attempt.Status,
-			ErrorCode:          attempt.ErrorCode,
-			ErrorMessage:       attempt.Error,
-			Invoked:            attempt.Invoked,
-			LatencyMS:          attempt.LatencyMS,
-			CreatedAt:          now,
-		})
+		items = append(items, newRouteAttemptLog(requestID, index, attempt, now))
 	}
 	_ = s.db.Create(&items).Error
 }
